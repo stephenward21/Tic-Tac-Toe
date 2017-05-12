@@ -7,6 +7,7 @@ var whoseTurn = 1;
 var player1Squares = [];
 var player2Squares = [];
 var computerSquares = [];
+var takenSquares = [];
 // var squareVals = ["A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3"];
 var winningCombos = [
 
@@ -23,7 +24,25 @@ var winningCombos = [
 
 var gameOva = false;
 var onePlayerGame = true;
+var computerGame = true;
 // var twoPlayerGame = false;
+
+var player1Win = 0;
+var player2Win = 0;
+
+var numberOfPlayersMessageElement = document.getElementById("numberOfPlayers");
+
+function vsComputer(){
+	onePlayerGame = true;
+	numberOfPlayersMessageElement.innerHTML = "You've chosen the Computer";
+	console.log("One player");
+}
+
+function twoPlayer(){
+	onePlayerGame = false;
+	numberOfPlayersMessageElement.innerHTML = "You've got the human";
+	console.log("Two players");
+}
 
 
 var squares = document.getElementsByClassName("square");  // the getElementsByClassName will create an array of everything with square class
@@ -51,15 +70,17 @@ function markSquare(currentSquare){
 		currentSquare.innerHTML = "X";
 		whoseTurn = 2;
 		player1Squares.push(currentSquare.id)
+		takenSquares.push(currentSquare.id)
 		checkWin(player1Squares, 1);
 		if(onePlayerGame){
-			computerMove();
+			computerMove(currentSquare);
 		}
 		
-	}else {
+	}else{
 		console.log("this ran")
 		currentSquare.innerHTML = "O";
 		whoseTurn = 1;
+		squareResult = ''
 		player2Squares.push(currentSquare.id)
 		checkWin(player2Squares, 2);
 		
@@ -69,17 +90,35 @@ function markSquare(currentSquare){
 	messageElement.innerHTML = squareResult;
 }
 
-function computerMove(){
-	var randomSquare = squares[Math.floor(Math.random() * squares.length)]
-	console.log(randomSquare, "this is the random square")
-	if ((randomSquare.innerHTML != "X") && (randomSquare.innerHTML !=  "O")){
-		randomSquare.innerHTML == "O"
-		// whoseTurn = 1;
-		computerSquares.push(randomSquare.id)
-		console.log(randomSquare.innerHTML, "this is the random square");
+function computerMove(currentSquare){
+	squareFound = false;
+	rand = Math.floor(Math.random() * 9);
+	while (squareFound == false) {
+		rand = Math.floor(Math.random() * 9);
+		if ((squares[rand].innerHTML != "X") && (squares[rand].innerHTML != "O")) {
+			squareFound = true;
+			markSquare(squares[rand]);
+			player2Squares.push(squares[rand]);
+			takenSquares.push(currentSquare.id);
+		}else if (takenSquares.length == squares.length){
+			break;
+		}
+	}
+}
 
-	} 
-	markSquare(randomSquare);
+
+
+// function computerMove(currentSquare){
+// 	var randomSquare = squares[Math.floor(Math.random() * squares.length)]
+// 	console.log(randomSquare, "this is the random square")
+// 	if ((randomSquare.innerHTML != "X") && (randomSquare.innerHTML !=  "O")){
+// 		randomSquare.innerHTML == "O"
+// 		// whoseTurn = 1;
+// 		computerSquares.push(randomSquare.id)
+// 		console.log(randomSquare.innerHTML, "this is the random square");
+
+// 	} 
+// 	markSquare(randomSquare);
 	
 
 	// squareFound = false;
@@ -97,7 +136,7 @@ function computerMove(){
 	// if it's not, keep looking
 
 
-}
+
 
 function checkWin(currentPlayerSquares, whoJustWent){
 	for (i = 0; i < winningCombos.length; i++){
@@ -130,6 +169,21 @@ function gameOver(whoJustWon, winningCombos){
 	}
 	gameOva = true;
 }
+
+function reset(){
+	var squares = document.getElementsByClassName('square');
+	for (let i = 0; i < squares.length; i++){
+		squares[i].innerHTML = "&nbsp;";
+		squares[i].className = "square";
+		gameOva = false;
+		// markSquare();
+
+
+	}
+	
+		
+} 
+
 
 
 
